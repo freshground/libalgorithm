@@ -63,7 +63,7 @@ static void rb_postorder_walk(rb_binary_tree_t *tree, rb_tree_node_t *x);
 static void rb_delete_all_nodes(rb_binary_tree_t *tree);
 static rb_binary_tree_t * rb_join_trees(rb_binary_tree_t *left_tree, rb_binary_tree_t *right_tree);
 
-unsigned long rb_tree_init(void)
+unsigned long rb_tree_initialize(void)
 {
     rb_binary_tree_t *tree = malloc(sizeof(rb_binary_tree_t));
     
@@ -81,7 +81,7 @@ unsigned long rb_tree_init(void)
     return (unsigned long)tree;
 }
 
-void rb_tree_deinit(unsigned long tr)
+void rb_tree_deinitialize(unsigned long tr)
 {
     rb_binary_tree_t *tree = (rb_binary_tree_t *)tr;
     
