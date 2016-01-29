@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+unsigned int pop_count(unsigned int v);
+
 #define BITS_OF_INT (sizeof(int) * 8)
 
 typedef struct bit_vector_s{
@@ -168,7 +170,7 @@ int bit_vector_get(unsigned long v)
 {
     bit_vector_t *vec = (bit_vector_t *)v;
     int size = vec->size;
-    int *map, byte_idx, bit_off;
+    int *map = NULL, byte_idx, bit_off;
     
     size = (size + BITS_OF_INT - 1) / BITS_OF_INT;
     for (byte_idx = 0; byte_idx < size; byte_idx ++) {
@@ -177,7 +179,7 @@ int bit_vector_get(unsigned long v)
             break;
     }
     
-    if (byte_idx >= size)
+    if (!map || *map == -1)
         return -1;
     
     for (bit_off = 0; bit_off < BITS_OF_INT; bit_off ++) {
@@ -188,4 +190,38 @@ int bit_vector_get(unsigned long v)
     }
     
     return (BITS_OF_INT * byte_idx + bit_off);
+}
+
+int bit_vector_get_num_of_set_bit(unsigned long v)
+{
+    bit_vector_t *vec = (bit_vector_t *)v;
+    int size = vec->size;
+    int *map, byte_idx, sum = 0;
+    
+    size = (size + BITS_OF_INT - 1) / BITS_OF_INT;
+    for (byte_idx = 0; byte_idx < size; byte_idx ++) {
+        map = &(vec->vector[byte_idx]);
+        sum += pop_count(*map);
+    }
+
+    return sum;
+}
+
+int bit_vector_get_num_of_common_bit(unsigned long v1, unsigned long v2)
+{
+    bit_vector_t *vec1 = (bit_vector_t *)v1;
+    bit_vector_t *vec2 = (bit_vector_t *)v2;
+    int size1 = vec1->size, size2 = vec2->size, size;
+    int *map1, *map2, common_map, byte_idx, sum = 0;
+    
+    size = size1 < size2 ? size1 : size2;
+    size = (size + BITS_OF_INT - 1) / BITS_OF_INT;
+    for (byte_idx = 0; byte_idx < size; byte_idx ++) {
+        map1 = &(vec1->vector[byte_idx]);
+        map2 = &(vec2->vector[byte_idx]);
+        common_map = *map1 & *map2;
+        sum += pop_count(common_map);
+    }
+    
+    return sum;
 }
